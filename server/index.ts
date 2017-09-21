@@ -95,7 +95,7 @@ app.use(serverError);
 
 app.set('port', config.PORT);
 app.listen(app.get('port'), () => {
-    log.info(`WebService has started on port ${config.PORT} running in ${config.ENV.value} mode`);
+    log.info(`WebService has started on http://${config.IP}:${config.PORT} running in ${config.ENV.value} mode`);
 
     if (!config.ENV.prod) {
         log.info('PLEASE NOTE: your webservice is running not in a production mode!');
