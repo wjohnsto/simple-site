@@ -1,0 +1,17 @@
+{{> main/doctype}}
+<head>
+    {{> main/head}}
+    {{> main/images}}
+    {{#if main.blog.attributes.readTime}}
+    <meta name="twitter:label1" value="Reading time">
+    <meta name="twitter:data1" value="{{main.blog.attributes.readTime}} minute read">
+    {{/if}}
+    <meta property="og:type" content="article">
+    <script type="application/ld+json" data-sd-snippet="sd">{"@context": "http://schema.org","@type": "BlogPosting","headline": "{{main.blog.attributes.title}}","timeRequired":"{{main.blog.attributes.readTime}}M","image": {"@type": "ImageObject","url": "{{main.blog.attributes.fullImage}}","width": 1200,"height": 630},{{#if blog.attributes.tags}}"keywords": "{{main.blog.attributes.tags}}",{{/if}}"publisher": {"@type":"Organization","name":"MySite","url":"https://mysite.com/","logo":{"@type": "ImageObject","url": "{{@root.head.meta.baseUrl}}public/img/logos/text-logo-sd.png","width": 326,"height": 60},"sameAs":["https://www.facebook.com/company","https://www.instagram.com/company","https://www.linkedin.com/company","https://www.twitter.com/company"]},"position": "{{default blog.attributes.position 'author'}}","url": "{{main.blog.attributes.url}}","datePublished": "{{main.blog.attributes.created}}","dateCreated": "{{main.blog.attributes.created}}","dateModified": "{{main.blog.attributes.created}}","description": "{{main.blog.attributes.description}}","author": {"@type": "Person","name": "{{main.blog.attributes.author}}"},"mainEntityOfPage": {"@type": "WebPage","@id": "{{@root.head.meta.baseUrl}}"}}</script>
+</head>
+<body>
+    {{> nav}}
+    {{> main/body}}
+    {{> footer}}
+</body>
+</html>

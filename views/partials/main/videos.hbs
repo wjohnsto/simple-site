@@ -1,0 +1,10 @@
+{{#each head.meta.videos }}
+{{!-- Video --}}
+<meta name="twitter:card" content="player">
+<meta property="og:video:url" content="{{url}}">
+<meta property="og:video:secure_url" content="{{url}}">
+<meta property="og:video:type" content="{{default type 'text/html'}}">
+<meta property="og:video:width" content="{{default width 1280}}">
+<meta property="og:video:height" content="{{default height 720}}">
+{{!-- /Video --}}
+{{/each}}

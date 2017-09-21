@@ -1,0 +1,24 @@
+<section class="blog">
+    <div class="container py-5">
+        <div class="row">
+            {{#with main.blog}}
+            <article class="p-3 m-auto" style="max-width:900px">
+                <header class="text-gray">
+                    <h1 class="py-3">{{attributes.title}}</h1>
+                    <span>By {{attributes.author}} - </span>
+                    <time datetime="{{moment attributes.created 'YYYY-MM-DD'}}">{{moment attributes.created "MMMM DD, YYYY"}}</time> -
+                    <time class="nowrap font-weight-bold" datetime="{{attributes.readTime}}m">{{attributes.readTime}} minute read</time>
+                    <img class="w-100 mt-2" src="{{attributes.image}}" alt="{{attributes.title}}">
+                </header>
+                <hr>
+                <div class="blog-content">{{md body}}</div>
+            </article>
+            {{/with}}
+        </div>
+    </div>
+</section>
+<hr>
+
+<!-- Remove Style -->
+<link rel="stylesheet" href="/public/css/blog.css">
+<!-- /Remove Style -->

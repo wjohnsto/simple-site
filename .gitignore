@@ -1,0 +1,36 @@
+# Logs
+logs
+*.log
+*.log.*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# node-waf configuration
+.lock-wscript
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directory
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
+node_modules
+
+# OSX Folder Attributes
+.DS_Store
+
+# JS, css, and map files
+server/*.js
+server/*/*.js
+server/*/*/*.js
+public/css
+public/js
+public/lib
+*.map
+
+.vscode

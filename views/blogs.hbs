@@ -1,0 +1,53 @@
+<header class="bg-secondary">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col py-5">
+                <h1 class="pb-2">Blog</h1>
+                <p class="pb-4">Hear about our company.</p>
+                <a href="/about/" class="btn btn-outline-secondary whiteout">ABOUT US</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section class="blogs py-5">
+    <div class="container py-2">
+        <div class="card-columns">
+            {{#each main.blogs}}
+            <article class="card mb-3 index-{{@index}}">
+                <a href="/blog/{{attributes.slug}}/"><img class="card-img-top img-fluid" src="{{attributes.image}}" alt="{{attributes.title}} hero"></a>
+                <div class="card-body">
+                    <header class="text-info">
+                        <h4 class="card-title"><a href="/blog/{{attributes.slug}}/">{{attributes.title}}</a></h4>
+                        <span class="card-subtitle">{{attributes.author}} - </span>
+                        <time class="card-subtitle nowrap font-weight-bold" datetime="{{attributes.readTime}}m">{{attributes.readTime}} minute read</time>
+                    </header>
+                    <p class="card-text mt-3">{{attributes.description}}</p>
+                    <footer>
+                        <a href="/blog/{{attributes.slug}}/" class="btn btn-outline-info">READ MORE</a>
+                    </footer>
+                </div>
+            </article>
+            {{/each}}
+        </div>
+    </div>
+    <nav aria-label="Blog navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item{{#unless main.prev}} disabled{{/unless}}">
+                <a class="page-link" href="{{main.prev}}" tabindex="-1">Previous</a>
+            </li>
+            {{#each main.pages}}
+            <li class="page-item{{#if currentPage}} active{{/if}}">
+                <a class="page-link" href="{{url}}">{{add @index 1}}</a>
+            </li>
+            {{/each}}
+            <li class="page-item{{#unless main.next}} disabled{{/unless}}">
+                <a class="page-link" href="{{main.next}}">Next</a>
+            </li>
+        </ul>
+    </nav>
+</section>
+
+<!-- Remove Style -->
+<link rel="stylesheet" href="/public/css/blogs.css">
+<!-- /Remove Style -->

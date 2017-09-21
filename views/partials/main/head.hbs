@@ -1,0 +1,65 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name="msapplication-tap-highlight" content="no">
+<base href="/">
+
+{{!-- Canonical --}}
+<link rel="canonical" href="{{head.meta.canonical}}">
+<meta property="og:url" content="{{head.meta.canonical}}">
+{{!-- /Canonical --}}
+
+{{#if head.meta.amp }}
+{{!-- AMP --}}
+<link rel="amphtml" href="{{head.meta.canonical}}amp/">
+{{!-- /AMP --}}
+{{/if}}
+
+{{#if head.meta.robots }}
+<meta name="robots" content="{{head.meta.robots}}">
+{{/if}}
+
+{{!-- Favicon --}}
+<link rel="apple-touch-icon" sizes="57x57" href="/public/img/fav/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/public/img/fav/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/public/img/fav/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/public/img/fav/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/public/img/fav/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/public/img/fav/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/public/img/fav/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/public/img/fav/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/public/img/fav/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/public/img/fav/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/public/img/fav/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/public/img/fav/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/public/img/fav/favicon-16x16.png">
+<link rel="manifest" href="/public/img/fav/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/public/img/fav/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+{{!-- /Favicon --}}
+
+{{!-- Title --}}
+<title>{{default head.title "My Website"}}</title>
+<meta property="og:title" content="{{default head.title 'My Website'}}">
+{{!-- /Title --}}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta property="fb:app_id" content="327982684338553">
+
+{{!-- Description --}}
+<meta name="description" content="{{default head.meta.description 'Default description of my website/company.'}}">
+<meta property="og:description" content="{{default head.meta.description 'Default description of my website/company.'}}">
+{{!-- /Description --}}
+
+<!-- Remove Style -->
+<link rel="stylesheet" href="/public/css/base.css">
+<!-- /Remove Style -->
+
+{{!-- Organization ld+json --}}
+<script type="application/ld+json" data-sd-snippet="sd">{"@context":"http://schema.org/","@type":"Organization","name":"My Company","url":"https://mysite.com/","logo":{"@type": "ImageObject","url": "{{head.meta.baseUrl}}public/img/logos/company-text-logo-sd.png","width": 326,"height": 60},"sameAs":["https://www.facebook.com/company","https://www.instagram.com/company","https://www.linkedin.com/company","https://www.twitter.com/company"]}</script>
+{{!-- /Organization ld+json --}}
+
+{{!-- Breadcrumb ld+json --}}
+<script type="application/ld+json" data-sd-snippet="sd">{"@context": "http://schema.org","@type": "BreadcrumbList","itemListElement": [{{#each head.meta.breadcrumbs}}{"@type": "ListItem","position": {{index}},"item": {"@id": "{{url}}","name": "{{name}}"}}{{#unless @last}},{{/unless}}{{/each}}]}</script>
+{{!-- /Breadcrumb ld+json --}}

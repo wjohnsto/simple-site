@@ -1,0 +1,103 @@
+
+// NOTE: All of these variables originate from /node_modules/bootstrap/scss/_variables.scss
+// Bootstrap Variable setup
+$blue:   #3d70a3;
+$red:    #e58155;
+$orange: #f0ad4e;
+$yellow: #f8c44f;
+$green:  #8fd0b9;
+$teal:   #59bcca;
+
+$white:   #ffffff;
+$black:   #000000;
+$indigo:  #6610f2;
+$purple:  #6f42c1;
+$pink:    #e83e8c;
+$cyan:    #17a2b8;
+
+$gray-dark:                 #373f47;
+$gray:                      #6d6e71;
+$gray-light:                #87888b;
+$gray-lighter:              #8f9aa8;
+$gray-lightest:             #f7fafc;
+
+$colors: (
+  blue: $blue,
+  indigo: $indigo,
+  purple: $purple,
+  pink: $pink,
+  red: $red,
+  orange: $orange,
+  yellow: $yellow,
+  green: $green,
+  teal: $teal,
+  cyan: $cyan,
+  white: $white,
+  gray: $gray,
+  gray-dark: $gray-dark
+);
+
+$theme-colors: (
+  primary: $blue,
+  secondary: $teal,
+  success: $green,
+  info: $cyan,
+  warning: $orange,
+  danger: $red,
+  light: $gray-lighter,
+  dark: $gray-dark
+);
+
+$brand-primary:             $blue;
+$brand-success:             $green;
+$brand-info:                $teal;
+$brand-warning:             $orange;
+$brand-danger:              $red;
+$brand-inverse:             $gray-dark;
+
+$link-color:            $brand-primary;
+$link-hover-color:      darken($link-color, 15%);
+
+$font-family-sans-serif: "Lato", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+// End Bootstrap Variable Setup
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+
+// Grid containers
+//
+// Define the maximum width of `.container` for different screen sizes.
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px
+);
+
+$grid-gutter-width-base:     30px;
+$grid-gutter-widths: (
+  xs: $grid-gutter-width-base,
+  sm: $grid-gutter-width-base,
+  md: $grid-gutter-width-base,
+  lg: $grid-gutter-width-base,
+  xl: $grid-gutter-width-base,
+  xxl: $grid-gutter-width-base
+);
+
+$spacer:   1rem;
+$spacers: (
+    0: 0,
+    1: ($spacer * .25),
+    2: ($spacer * .5),
+    3: $spacer,
+    4: ($spacer * 1.5),
+    5: ($spacer * 3)
+);

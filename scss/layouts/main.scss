@@ -1,0 +1,21 @@
+
+@import '_functions';
+@import '_variables';
+@import 'mixins/_breakpoints';
+@import 'includes/_variables';
+@import 'includes/_bootstrap-overrides';
+
+@import 'partials/nav';
+@import 'partials/footer';
+
+main {
+    position: relative;
+
+    > *:first-child {
+        padding-top: 4em;
+
+        @include media-breakpoint-up(sm) {
+            padding-top: 4.5em;
+        }
+    }
+}

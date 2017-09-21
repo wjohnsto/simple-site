@@ -1,0 +1,50 @@
+.navbar {
+    box-shadow: 0 2px 2px 1px rgba(25,25,25,.2);
+
+    @include media-breakpoint-down(md) {
+        .dropdown-menu {
+            border-top: none;
+            border-right: none;
+            border-bottom: none;
+        }
+    }
+}
+
+.navbar-nav {
+    line-height: 2em;
+}
+
+.navbar-collapse {
+    font-size: 85%;
+    font-weight: 700;
+
+    a {
+        letter-spacing: 0.12em;
+    }
+
+    &:not(.show):not(.collapsing) {
+        .nav-item.active {
+            border-bottom: 3px solid $brand-info;
+        }
+    }
+
+    &.show, &.collapsing {
+        .nav-item {
+            padding-left: 1em;
+        }
+
+        .nav-item.active {
+            border-left: 5px solid $brand-info;
+        }
+    }
+}
+
+.navbar-brand > img {
+    height: 2em;
+    max-width: none;
+    max-height: none;
+
+    @include media-breakpoint-up(sm) {
+        height: 2.25em;
+    }
+}

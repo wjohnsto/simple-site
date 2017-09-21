@@ -1,0 +1,42 @@
+@import 'layouts/main';
+
+.blog {
+    .social-icon {
+        height: auto;
+        width: 2em;
+    }
+
+    header > :not(h1) {
+        font-size: 1.1em;
+    }
+
+    .blog-content {
+        > *:not(h1):not(h2):not(h3):not(h4):not(h5):not(h6) {
+            font-size: 1.15em;
+            letter-spacing: 0.01em;
+        }
+
+        blockquote {
+            font-size: 1.25em;
+            background: $gray-lightest;
+            border-left: 10px solid $gray-lighter;
+            margin: 1.5em 0.5em;
+            padding: 0.5em 1em;
+            quotes: "\201C""\201D""\2018""\2019";
+            font-weight: 700;
+
+            &:before {
+                color: $gray-lighter;
+                content: open-quote;
+                font-size: 3.5em;
+                line-height: 0.1em;
+                margin-right: 0.25em;
+                vertical-align: -0.4em;
+            }
+
+            p {
+                display: inline;
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{{> main/doctype}}
+<head>
+    {{> main/head}}
+    {{> main/images}}
+    {{> main/videos}}
+    <script type="application/ld+json" data-sd-snippet="sd">{"@context": "http://schema.org/","@type": "CollectionPage","name": "Blog Posts by: Company","headline": "Blog Posts by: Company","about": {"@type": "Organization","@id":"https://www.facebook.com/company","name": "Company","logo": "{{@root.head.meta.baseUrl}}public/img/logos/text-logo.png","description": "Company description"},"mainEntity": {"@type": "ItemList","itemListElement": [{{#each main.blogs}}{"@type": "BlogPosting","headline": "{{attributes.title}}","timeRequired":"{{attributes.readTime}}M","image": {"@type":"ImageObject","url":"{{attributes.fullImage}}","width": 1200,"height": 630},{{#if attributes.tags}}"keywords": "{{attributes.tags}}",{{/if}}"publisher": {"@type":"Organization","name":"Company","url":"https://mysite.com/","logo":{"@type": "ImageObject","url": "{{@root.head.meta.baseUrl}}public/img/logos/text-logo-sd.png","width": 326,"height": 60},"sameAs":["https://www.facebook.com/company`","https://www.instagram.com/company`","https://www.linkedin.com/company","https://www.twitter.com/company"]},"position": "{{default attributes.position 'author'}}","url": "{{attributes.url}}","datePublished": "{{attributes.created}}","dateCreated": "{{attributes.created}}","dateModified": "{{attributes.created}}","description": "{{attributes.description}}","author": {"@type": "Person","name": "{{attributes.author}}"},"mainEntityOfPage": {"@type": "WebPage","@id": "{{@root.head.meta.baseUrl}}"}}{{#unless @last}},{{/unless}}{{/each}}]}}</script>
+</head>
+<body>
+    {{> nav}}
+    {{> main/body}}
+    {{> footer}}
+</body>
+</html>
