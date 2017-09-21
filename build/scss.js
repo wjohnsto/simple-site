@@ -62,7 +62,7 @@ utils.mapAsync(files, (file) => {
         }
 
         return new Promise((resolve, reject) => {
-            purify(content, output.css.toString(), { whitelist: ['*active*', '*disabled*', '*collapsing*', '*error*', '*modal-open*'] }, (result) => {
+            purify(content, output.css.toString(), { whitelist: ['*active*', '*disabled*', '*collapsing*', '*error*', '*modal-open*', '*show*'] }, (result) => {
                 resolve(result);
             });
         });
