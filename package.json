@@ -83,7 +83,7 @@
         "dev:server": "nodemon -w server -e js,json --delay 2",
         "dev:sync": "browser-sync start --proxy \"http://localhost:3000\" --reload-delay 2000 --logLevel \"silent\" --no-open --no-notify --no-ui --files \"public/**\" --files \"server/**/*.js\" --files \"server/**/*.md\" --files \"server/**/*.js\" --files \"views/**\"",
         "prepare": "npm run build",
-        "start": "node server",
+        "start": "node server/index.js",
         "watch": "concurrently -r -k \"npm run watch:css\" \"npm run watch:server\" \"npm run watch:client\"",
         "watch:css": "nodemon -q -w scss -e scss --exec npm run build:css",
         "watch:client": "tsc -p tsconfig.client.json -w",
