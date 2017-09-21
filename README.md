@@ -129,6 +129,10 @@ You can see a working demo of this project [here](https://simple-website-demo.he
 
 * **William Johnston** - *Initial work* - [wjohnsto](https://github.com/wjohnsto)
 
+## Contributors
+
+* **Jesse Li** - [veggiedefender](https://github.com/veggiedefender)
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
