@@ -2,6 +2,8 @@
 
 Are you looking to build a website that is easily updatable/maintainable? Do you hate Wordpress and other bloated website platforms? Do you understand that simple websites do not require the use of a SPA framework? Do you still want to needlessly optimize your site to the nth degree, and get a 100 on [Google PageSpeed](https://developers.google.com/speed/pagespeed/insights/)? Well this is the project for you.
 
+You can see a working demo of this project [here](https://simple-website-demo.herokuapp.com/).
+
 ## Getting Started
 
 So you're ready to build an awesome new website. Good, this is the place to be. This project helps you setup a site using Bootstrap 4, TypeScript, SASS, Handlebars, NodeJS/Express, Markdown, and a few optimizations for serving webp, AMP, bundling js/css, inlining js/css, and helping with SEO/Structured Data.
@@ -121,7 +123,7 @@ This site can be deployed on AWS, GCP, Azure, Heroku, etc. I didn't include any 
 
 ## Demo
 
-You can see a version of this site at https://covalence.io/
+You can see a working demo of this project [here](https://simple-website-demo.herokuapp.com/).
 
 ## Authors
 
