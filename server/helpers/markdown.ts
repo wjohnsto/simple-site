@@ -1,17 +1,18 @@
-import fs from 'fs-extra';
-import _ from 'lodash';
-import hbs from 'handlebars';
-import Remarkable from 'remarkable';
 import fm from 'front-matter';
+import fs from 'fs-extra';
+import hbs from 'handlebars';
+import _ from 'lodash';
+import Remarkable from 'remarkable';
 
 function prepareSnippet(md: any) {
-    _.forEach(md.renderer.rules, (rule: Function, key: string) => {
+    _(md.renderer.rules).forEach((rule: Function, key: string) => {
         if (
             key.indexOf('_') > -1 ||
             key.indexOf('br') > -1 ||
             key.indexOf('hr') > -1
         ) {
             md.renderer.rules[key] = () => '';
+
             return;
         }
 
@@ -59,11 +60,11 @@ export function render(str: string, options: any) {
     return out;
 }
 
-export default function(context: any, options: any = { hash: {} }) {
+export function toMarkdown(context: any, options: any = { hash: {} }) {
     if (context.slice(-3) === '.md') {
-        let buffer = fs.readFileSync(context);
+        const buffer = fs.readFileSync(context);
 
-        if (!buffer) {
+        if (_.isNil(buffer)) {
             return '';
         }
 

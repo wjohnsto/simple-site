@@ -1,14 +1,13 @@
 import fs from 'fs-extra';
-import moment from 'moment-timezone';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 
 export function readTime(str: string = '') {
-    let wordCount = str.trim().split(' ');
-    let length = wordCount.length;
-    let time = length / 200;
-    let minutes = Math.floor(time);
+    const wordCount = str.trim().split(' ');
+    const length = wordCount.length;
+    const time = length / 200;
 
-    return minutes;
+    return Math.floor(time);
 }
 
 export function isEmptyString(value: any) {
@@ -19,10 +18,7 @@ export function isEmptyString(value: any) {
     );
 }
 
-export function isExpired(date: string): boolean;
-export function isExpired(date: Date): boolean;
-export function isExpired(date: moment.Moment): boolean;
-export function isExpired(date: any): boolean {
+export function isExpired(date: string | Date | moment.Moment): boolean {
     if (!_.isDate(date) && _.isEmpty(date)) {
         return true;
     }
@@ -45,27 +41,30 @@ export function toString(value: any): string {
 }
 
 export function pluralize(str: string): string {
-    let last = str.slice(-2);
+    const last = str.slice(-2);
 
     if (last[1] === 'y') {
-        return str.slice(0, -1) + 'ies';
+        return `${str.slice(0, -1)}ies`;
     } else if (/(?:.[s|z|x]|ch|sh)$/.test(last)) {
-        return str + 'es';
+        return `${str}es`;
     }
 
-    return str + 's';
+    return `${str}s`;
 }
 
-export function readDir(dir: string): Promise<Array<string>> {
+export function readDir(dir: string): Promise<string[]> {
     return new Promise((resolve, reject) => {
         if (!_.isString(dir)) {
             resolve([]);
+
             return;
         }
 
         fs.readdir(dir, (err, files) => {
             if (_.isObject(err)) {
-                return reject(err);
+                reject(err);
+
+                return;
             }
 
             resolve(files);
@@ -77,12 +76,15 @@ export function readFile(filename: string): Promise<string> {
     return new Promise((resolve, reject) => {
         if (!_.isString(filename)) {
             resolve();
+
             return;
         }
 
         fs.readFile(filename, (err, buffer) => {
             if (_.isObject(err)) {
-                return reject(err);
+                reject(err);
+
+                return;
             }
 
             resolve(buffer.toString());
@@ -93,11 +95,13 @@ export function readFile(filename: string): Promise<string> {
 export function fileExists(path: string): Promise<any> {
     return new Promise((resolve, reject) => {
         fs.lstat(path, (err: NodeJS.ErrnoException, stats: fs.Stats) => {
-            if (err) {
-                return reject(err);
+            if (!_.isNil(err)) {
+                reject(err);
+
+                return;
             }
 
-            if (stats.isFile) {
+            if (stats.isFile()) {
                 resolve();
             }
         });
@@ -106,13 +110,23 @@ export function fileExists(path: string): Promise<any> {
 
 export function wait(ms: number = 0, value?: any): Promise<void> {
     return new Promise<void>((resolve) => {
-        setTimeout(resolve, ms, value);
+        setTimeout(
+            (v) => {
+                resolve(v);
+            },
+            ms,
+            value
+        );
     });
 }
 
 export function mapAsync<T, TResult>(
     collection: _.List<T> | null | undefined,
     iterator: _.ListIterator<T, Promise<TResult>>
-): Promise<Array<TResult>> {
-    return Promise.all<TResult>(<any>_.map(collection, iterator));
+): Promise<TResult[]> {
+    return Promise.all<TResult>(
+        _(collection)
+            .map(iterator)
+            .value()
+    );
 }

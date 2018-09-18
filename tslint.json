@@ -1,0 +1,86 @@
+{
+    "extends": "./node_modules/tslint-microsoft-contrib",
+    "rules": {
+        "align": false,
+        "completed-docs": false,
+        "cyclomatic-complexity": false,
+        "export-name": false,
+        "function-name": false,
+        "import-name": false,
+        "linebreak-style": false,
+        "match-default-export-name": false,
+        "max-classes-per-file": false,
+        "max-func-body-length": [
+            false,
+            100,
+            {
+                "ignore-parameters-to-function-regex": "describe"
+            }
+        ],
+        "max-line-length": [true, 160],
+        "member-ordering": [
+            true,
+            {
+                "order": [
+                    "public-static-field",
+                    "private-static-field",
+                    "public-instance-field",
+                    "private-instance-field",
+                    "public-static-method",
+                    "protected-static-method",
+                    "private-static-method",
+                    "public-constructor",
+                    "protected-constructor",
+                    "private-constructor",
+                    "public-instance-method",
+                    "protected-instance-method",
+                    "private-instance-method"
+                ]
+            }
+        ],
+        "missing-jsdoc": false,
+        "no-any": false,
+        "no-backbone-get-set-outside-model": false,
+        "no-bitwise": false,
+        "no-console": false,
+        "no-empty": false,
+        "no-floating-promises": false,
+        "no-function-constructor-with-string-args": false,
+        "no-http-string": false,
+        "no-implicit-dependencies": false,
+        "no-import-side-effect": false,
+        "no-multiline-string": false,
+        "no-object-literal-type-assertion": false,
+        "no-octal-literal": false,
+        "no-parameter-properties": false,
+        "no-parameter-reassignment": false,
+        "no-redundant-jsdoc": false,
+        "no-reference": false,
+        "no-relative-imports": false,
+        "no-reserved-keywords": false,
+        "no-suspicious-comment": false,
+        "no-typeof-undefined": false,
+        "no-unnecessary-class": false,
+        "no-unnecessary-type-assertion": false,
+        "no-unsafe-any": false,
+        "no-use-before-declare": false,
+        "ordered-imports": [true],
+        "possible-timing-attack": false,
+        "promise-function-async": false,
+        "quotemark": [true, "single", "avoid-escape", "avoid-template"],
+        "trailing-comma": [
+            true,
+            {
+                "esSpecCompliant": true,
+                "multiline": {
+                    "arrays": "always",
+                    "functions": "never",
+                    "objects": "always",
+                    "typeLiterals": "ignore"
+                }
+            }
+        ],
+        "typedef": false,
+        "variable-name": false
+    }
+}

@@ -2,12 +2,12 @@ import express from 'express';
 import { HTTP_CODES } from '../config';
 const { HTTP_SUCCESS } = HTTP_CODES;
 
-export default (
+function cors(
     err: Error,
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
-) => {
+) {
     // CORS headers
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -23,4 +23,6 @@ export default (
     } else {
         next();
     }
-};
+}
+
+export = cors;

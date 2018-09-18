@@ -1,12 +1,13 @@
 import express from 'express';
+import _ from 'lodash';
 import log from '../log';
 
-export default (
+function logError(
     err: Error,
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
-) => {
+) {
     let { method } = req;
 
     const { url, body } = req;
@@ -18,13 +19,15 @@ export default (
         log.error(`body is -> ${JSON.stringify(body)}`);
     }
 
-    if (err.stack) {
+    if (!_.isNil(err.stack)) {
         log.error(err.stack);
-    } else if (err.message) {
+    } else if (!_.isNil(err.message)) {
         log.error(err.message);
     } else {
         log.error(err);
     }
 
     next(err);
-};
+}
+
+export = logError;

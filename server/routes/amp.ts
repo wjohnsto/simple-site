@@ -11,19 +11,18 @@ export function render(
 
     if (_.isNil(head) || _.isNil(head.meta) || !head.meta.amp) {
         next();
+
         return;
     }
 
     req.context.layout = false;
 
-    res.render('amp', req.context, (err, html) => {
-        parse(req, req.url, html).then(
-            (html) => {
-                res.send(html);
-            },
-            (err) => {
-                next(err);
-            }
-        );
+    res.render('amp', req.context, async (err: Error, html: string) => {
+        try {
+            html = await parse(req, req.url, html);
+            res.send(html);
+        } catch (e) {
+            next(e);
+        }
     });
 }

@@ -1,8 +1,11 @@
+import getHelpers from 'handlebars-helpers';
 import _ from 'lodash';
-import md from './markdown';
+import { toMarkdown } from './markdown';
 
-const helpers = require('handlebars-helpers')();
+const helpers = _(getHelpers())
+    .assign({
+        md: toMarkdown,
+    })
+    .value();
 
-export default _.assign(helpers, {
-    md,
-});
+export = helpers;

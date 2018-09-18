@@ -1,20 +1,19 @@
 import express from 'express';
+import fm from 'front-matter';
+import _ from 'lodash';
 import path from 'path';
 import url from 'url';
-import _ from 'lodash';
-import config from '../config';
-import * as utils from '../utils';
+import { config } from '../config';
 import log from '../log';
 import parse from '../middleware/parse';
-
-const fm = require('front-matter');
+import * as utils from '../utils';
 
 export function context(
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
 ) {
-    let context = (req.context = {
+    const ctxt = (req.context = {
         head: {
             meta: {
                 amp: true,
@@ -28,20 +27,20 @@ export function context(
         },
     });
 
-    let filePath = (context.main.blog.file = path.resolve(
+    const filePath = (ctxt.main.blog.file = path.resolve(
         config.root,
         'server/blogs',
-        req.params.title + '.md'
+        `${req.params.title}.md`
     ));
 
     utils
         .readFile(filePath)
         .then((contents) => {
-            let content = fm(contents);
-            let attributes = content.attributes;
-            let head: any = context.head;
+            const content = fm<any>(contents);
+            const attributes = content.attributes;
+            const head: any = ctxt.head;
 
-            content.file = filePath;
+            (<any>content).file = filePath;
 
             const slug = req.params.title;
 
@@ -58,8 +57,8 @@ export function context(
                 host,
             });
 
-            attributes.url = baseUrl + '/blog/' + slug + '/';
-            attributes.fullImage = baseUrl + attributes.image;
+            attributes.url = `${baseUrl}/blog/${slug}/`;
+            attributes.fullImage = `${baseUrl}${attributes.image}`;
             attributes.slug = slug;
             attributes.created = new Date(attributes.created);
             attributes.readTime = utils.readTime(content.body);
@@ -70,7 +69,7 @@ export function context(
                 { url: attributes.image },
                 { url: '/public/img/meta/blog.jpg' },
             ];
-            context.main.blog = content;
+            ctxt.main.blog = <any>content;
 
             next();
         })
@@ -91,22 +90,20 @@ export function render(
             let layout: any = 'article';
             let page = 'blog';
 
-            if (req.url.indexOf(req.params.title + '/amp/') > -1) {
+            if (req.url.indexOf(`${req.params.title}/amp/`) > -1) {
                 layout = false;
                 page = 'amp';
             }
 
             req.context.layout = layout;
-            res.render(page, req.context, (err, html) => {
+            res.render(page, req.context, async (err: Error, html: string) => {
                 if (!!layout) {
-                    parse(req, req.url, html).then(
-                        (html) => {
-                            res.send(html);
-                        },
-                        (err) => {
-                            next(err);
-                        }
-                    );
+                    try {
+                        html = await parse(req, req.url, html);
+                        res.send(html);
+                    } catch (e) {
+                        next(e);
+                    }
                 } else {
                     res.send(html);
                 }

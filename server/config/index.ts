@@ -1,16 +1,15 @@
+import _ from 'lodash';
 import path from 'path';
 import log from '../log';
 
-const consoleStamp = require('console-stamp');
+import consoleStamp from 'console-stamp';
 
-if (!process.env['NODE_ENV']) {
-    process.env['NODE_ENV'] = 'development';
-}
+process.env.NODE_ENV = _.defaultTo(process.env.NODE_ENV, 'development');
 
-let ENV = {
-    dev: !process.env['NODE_ENV'] || process.env['NODE_ENV'] === 'development',
-    prod: process.env['NODE_ENV'] === 'production',
-    value: process.env['NODE_ENV'],
+const ENV = {
+    dev: process.env.NODE_ENV === 'development',
+    prod: process.env.NODE_ENV === 'production',
+    value: <string>process.env.NODE_ENV,
 };
 
 export const HTTP_CODES = {
@@ -38,14 +37,14 @@ const configDefaults = {
         PORT: '3000',
         IP: 'localhost',
         logLevel: log.LOG_LEVEL.TRACE,
-        root: path.resolve(__dirname + '/../..'),
+        root: path.resolve(`${__dirname}/../..`),
     },
     production: {
         ENV,
-        PORT: <string>process.env['PORT'],
+        PORT: <string>process.env.PORT,
         IP: 'mysite.com',
         logLevel: log.LOG_LEVEL.WARN,
-        root: path.resolve(__dirname + '/../..'),
+        root: path.resolve(`${__dirname}/../..`),
     },
 };
 
@@ -58,4 +57,4 @@ if (ENV.prod) {
 consoleStamp(console, { pattern: 'dd/mmm/yyyy:HH:MM:ss o' });
 log.setLogLevel(config.logLevel);
 
-export default config;
+export { config };

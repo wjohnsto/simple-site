@@ -1,13 +1,13 @@
-import url from 'url';
 import express from 'express';
 import _ from 'lodash';
-import config from '../config';
+import url from 'url';
+import { config } from '../config';
 
-function normalizeUrl(url: string) {
-    return url + (url.slice(-1) === '/' ? '' : '/');
+function normalizeUrl(u: string) {
+    return `${u}${u.slice(-1) === '/' ? '' : '/'}`;
 }
 
-export default function meta(
+function meta(
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
@@ -21,16 +21,16 @@ export default function meta(
         },
     });
 
-    let meta = req.context.head!.meta;
+    let m = _.isNil(req.context.head) ? {} : req.context.head.meta;
 
-    if (_.isNil(meta)) {
-        meta = {};
+    if (_.isNil(m)) {
+        m = {};
     }
 
-    if (_.isArray(meta.images)) {
-        meta.images.push({ url: '/public/img/meta/home.jpg' });
+    if (_.isArray(m.images)) {
+        m.images.push({ url: '/public/img/meta/home.jpg' });
     } else {
-        meta.images = [{ url: '/public/img/meta/home.jpg' }];
+        m.images = [{ url: '/public/img/meta/home.jpg' }];
     }
 
     let host = req.hostname;
@@ -56,31 +56,34 @@ export default function meta(
     baseUrl = normalizeUrl(baseUrl);
     reqUrl = normalizeUrl(reqUrl);
 
-    if (!meta.breadcrumbs) {
-        meta.breadcrumbs = _.map(req.url.split('/'), (partial, index, list) => {
-            let name = _.startCase(_.toLower(partial.replace(/-/g, ' ')));
+    if (!_.isArray(m.breadcrumbs)) {
+        m.breadcrumbs = _(req.url.split('/'))
+            .map((partial, index, list) => {
+                let name = _.startCase(_.toLower(partial.replace(/-/g, ' ')));
 
-            if (index > 1) {
-                partial = (<any>list).slice(0, index + 1).join('/');
-            }
+                if (index > 1) {
+                    partial = (<any>list).slice(0, index + 1).join('/');
+                }
 
-            let url = baseUrl + partial;
+                let u = baseUrl + partial;
 
-            if (index === 0) {
-                name = 'Home';
-            } else {
-                url += '/';
-            }
+                if (index === 0) {
+                    name = 'Home';
+                } else {
+                    u += '/';
+                }
 
-            return {
-                url,
-                index: index + 1,
-                name,
-            };
-        }).slice(0, -1);
+                return {
+                    url: u,
+                    index: index + 1,
+                    name,
+                };
+            })
+            .value()
+            .slice(0, -1);
     }
 
-    _.each(meta.images, (image) => {
+    _(m.images).each((image) => {
         if (!_.isEmpty(image.url) && image.url.indexOf('/') === 0) {
             image.url = url.format({
                 protocol,
@@ -90,9 +93,11 @@ export default function meta(
         }
     });
 
-    meta.baseUrl = baseUrl;
-    meta.canonical = meta.canonical || reqUrl;
-    meta.canonical = meta.canonical.replace(/\/amp\//g, '/');
+    m.baseUrl = baseUrl;
+    m.canonical = _.isString(m.canonical) ? m.canonical : reqUrl;
+    m.canonical = m.canonical.replace(/\/amp\//g, '/');
 
     next();
 }
+
+export = meta;

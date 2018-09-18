@@ -12,27 +12,27 @@ So you're ready to build an awesome new website. Good, this is the place to be. 
 
 The site has the following directories
 
-- `build`: Contains some build scripts for running the server
-- `public`: Where all the public assets go. Note that the CSS and JS folders will be created automatically by the build process.
-- `scss`: Where you put all your SASS files.
-  - `includes`: Used for global styles, bootstrap overrides, etc
-  - `layouts`: Used for main layout styles
-  - `partials`: Used for partial layout styles
-- `server`: Contains all the files necessary to run the server
-  - `blogs`: Put all your blog markdown here
-  - `config`: Stores global configuration for the server
-  - `helpers`: Stores handlebars helpers
-  - `log`: A simple logging utility class
-  - `middleware`: Has files for CORS, errors, setting meta context, serving webp, handling redirects, and parsing/compiling Handlebars files
-  - `routes`: Defines all the pages for the site
-  - `typings`: Adds some types to the project
-  - `utils`: Has utility methods and a caching class
-- `ts`: Where you put all your TS files.
-  - `layouts`: Used for TS scripts that can be included in many pages
-  - `partials`: Used for TS scripts that need only be included in specific pages
-- `views`: Where you put all your Handlebars files for your pages.
-  - `layouts`: Used for Handlebars layout pages
-  - `partials`: Used for Handlebars partials
+-   `build`: Contains some build scripts for running the server
+-   `public`: Where all the public assets go. Note that the CSS and JS folders will be created automatically by the build process.
+-   `scss`: Where you put all your SASS files.
+    -   `includes`: Used for global styles, bootstrap overrides, etc
+    -   `layouts`: Used for main layout styles
+    -   `partials`: Used for partial layout styles
+-   `server`: Contains all the files necessary to run the server
+    -   `blogs`: Put all your blog markdown here
+    -   `config`: Stores global configuration for the server
+    -   `helpers`: Stores handlebars helpers
+    -   `log`: A simple logging utility class
+    -   `middleware`: Has files for CORS, errors, setting meta context, serving webp, handling redirects, and parsing/compiling Handlebars files
+    -   `routes`: Defines all the pages for the site
+    -   `typings`: Adds some types to the project
+    -   `utils`: Has utility methods and a caching class
+-   `ts`: Where you put all your TS files.
+    -   `layouts`: Used for TS scripts that can be included in many pages
+    -   `partials`: Used for TS scripts that need only be included in specific pages
+-   `views`: Where you put all your Handlebars files for your pages.
+    -   `layouts`: Used for Handlebars layout pages
+    -   `partials`: Used for Handlebars partials
 
 ### Features
 
@@ -95,18 +95,33 @@ npm install
 ```
 
 ```
+npm run lib
+```
+
+```
 npm run dev
 ```
 
 Then navigate to http://localhost:3000/ and see a sample mini-site built out for you.
 
+**NOTE**: You only need to run `npm run lib` whenever you change the `lib.js` in `/build`, or when one of the libraries updates.
+
 ### Adding a Page
 
 When you want to add a page, there are a couple things to do:
 
-0. Create a new Handlebars file in `views`
-0. Create a new route in `server/routes`
-0. Add the route to the Express router in `server/routes/index.ts`
+1. Create a new Handlebars file in `views`
+1. Create a new route in `server/routes`
+1. Add the route to the Express router in `server/routes/index.ts`
+
+### Useful NPM Scripts
+
+1. `build`: Builds everything (srver, client, lib, and sass)
+1. `clean`: Cleans the compiled files
+1. `dev`: Run this in dev mode, watches files and starts a dev server
+1. `format`: Runs `prettier` to format all the TS files according to the `prettier.config.js`
+1. `lint`: Runs `tslint` using the `tslint.json`, also uses some addons from `tslint-microsoft-contrib`
+1. `start`: Starts node server
 
 ## Deployment
 
@@ -114,12 +129,12 @@ This site can be deployed on AWS, GCP, Azure, Heroku, etc. I didn't include any 
 
 ## Built With
 
-* [Express](http://expressjs.com/) - Used to render pages and serve assets
-* [Bootstrap 4](https://getbootstrap.com/) - Used for the easy layout, duh
-* [Handlebars](http://handlebarsjs.com/) - Used to render pages and apply simple context
-* [Remarkable](https://github.com/jonschlinkert/remarkable) - Used for markdown rendering on blog pages
-* [TypeScript](https://www.typescriptlang.org/) - Used to allow you to write simple scripts in TypeScript that will be included with your pages
-* [SASS](http://sass-lang.com/) - CSS precompiler
+-   [Express](http://expressjs.com/) - Used to render pages and serve assets
+-   [Bootstrap 4](https://getbootstrap.com/) - Used for the easy layout, duh
+-   [Handlebars](http://handlebarsjs.com/) - Used to render pages and apply simple context
+-   [Remarkable](https://github.com/jonschlinkert/remarkable) - Used for markdown rendering on blog pages
+-   [TypeScript](https://www.typescriptlang.org/) - Used to allow you to write simple scripts in TypeScript that will be included with your pages
+-   [SASS](http://sass-lang.com/) - CSS precompiler
 
 ## Demo
 
@@ -127,11 +142,11 @@ You can see a working demo of this project [here](https://simple-website-demo.he
 
 ## Authors
 
-* **William Johnston** - *Initial work* - [wjohnsto](https://github.com/wjohnsto)
+-   **William Johnston** - _Initial work_ - [wjohnsto](https://github.com/wjohnsto)
 
 ## Contributors
 
-* **Jesse Li** - [veggiedefender](https://github.com/veggiedefender)
+-   **Jesse Li** - [veggiedefender](https://github.com/veggiedefender)
 
 ## License
 

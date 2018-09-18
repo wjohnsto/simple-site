@@ -23,14 +23,12 @@ export function render(
     res: express.Response,
     next: express.NextFunction
 ) {
-    res.render('about', req.context, (err, html) => {
-        parse(req, req.url, html).then(
-            (html) => {
-                res.send(html);
-            },
-            (err) => {
-                next(err);
-            }
-        );
+    res.render('about', req.context, async (err: Error, html: string) => {
+        try {
+            html = await parse(req, req.url, html);
+            res.send(html);
+        } catch (e) {
+            next(e);
+        }
     });
 }

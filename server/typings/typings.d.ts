@@ -33,4 +33,4 @@ declare namespace models {
     }
 }
 
-declare module 'front-matter';
+declare module 'handlebars-helpers';

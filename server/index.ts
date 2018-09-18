@@ -1,24 +1,24 @@
-import express from 'express';
-import url from 'url';
-import _ from 'lodash';
-import logger from 'morgan';
 import bodyParser from 'body-parser';
-import path from 'path';
-import handlebars from 'express-handlebars';
-import moment from 'moment-timezone';
 import compression from 'compression';
+import express from 'express';
+import handlebars from 'express-handlebars';
+import _ from 'lodash';
+import moment from 'moment-timezone';
+import logger from 'morgan';
+import path from 'path';
+import url from 'url';
 import log from './log';
 import * as cache from './utils/cache';
 
-import config from './config';
-import routes from './routes';
-import redirects from './middleware/redirects';
-import webp from './middleware/webp';
-import cors from './middleware/cors';
-import notFound from './middleware/notfound';
-import logError from './middleware/logerror';
-import serverError from './middleware/servererror';
+import { config } from './config';
 import helpers from './helpers';
+import cors from './middleware/cors';
+import logError from './middleware/logerror';
+import notFound from './middleware/notfound';
+import redirects from './middleware/redirects';
+import serverError from './middleware/servererror';
+import webp from './middleware/webp';
+import routes from './routes';
 
 const app = express();
 
@@ -43,7 +43,7 @@ app.use('/static', express.static(publicPath));
 
 // Setup cache control for 1 day caching
 app.use((req, res, next) => {
-    let cacheControl = req.headers['cache-control'];
+    const cacheControl = req.headers['cache-control'];
 
     if (_.isString(cacheControl) && cacheControl.indexOf('no-') > -1) {
         res.setHeader('Cache-Control', cacheControl);
@@ -63,7 +63,7 @@ app.use((req, res, next) => {
         res.redirect(
             301,
             url.format({
-                pathname: req.path + '/',
+                pathname: `${req.path}/`,
                 query: req.query,
             })
         );

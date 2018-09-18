@@ -1,22 +1,22 @@
-import { join } from 'path';
-import { stat } from 'fs';
 import { Request, Response } from 'express';
+import { stat } from 'fs';
 import _ from 'lodash';
+import { join } from 'path';
+import vary from 'vary';
 
-const vary = require('vary');
-
-function valueInArray(value: string, array: Array<string>) {
-    for (let i = 0, len = array.length; i < len; i++) {
-        if (value === array[i]) {
+function valueInArray(value: string, array: string[]) {
+    for (const el of array) {
+        if (value === el) {
             return true;
         }
     }
+
     return false;
 }
 
-export default function webp(dirname: string, extensions?: Array<string>) {
-    let msieRegex = /msie/i,
-        tridenRegex = /\strident\//i;
+function webp(dirname: string, extensions?: string[]) {
+    const msieRegex = /msie/i;
+    const tridenRegex = /\strident\//i;
 
     if (_.isUndefined(extensions)) {
         extensions = ['jpg', 'png', 'jpeg'];
@@ -25,32 +25,37 @@ export default function webp(dirname: string, extensions?: Array<string>) {
     }
 
     return (req: Request, res: Response, next: Function) => {
-        let method = req.method.toUpperCase();
+        const method = req.method.toUpperCase();
 
         if (method !== 'GET' && method !== 'HEAD') {
             next();
+
             return;
         }
 
-        let pathname = req.path.replace('/static/', '');
-        let extpos = pathname.lastIndexOf('.');
-        let ext = pathname.slice(extpos + 1);
-        let ua = <string>req.headers['user-agent'];
-        let ie = msieRegex.test(ua) || tridenRegex.test(ua);
-        let accept: string = (<any>req.headers).accept;
-        let webp = !!accept && accept.indexOf('image/webp') > -1;
-        let canAccept = valueInArray(ext, <string[]>extensions) && (ie || webp);
+        const pathname = req.path.replace('/static/', '');
+        const extpos = pathname.lastIndexOf('.');
+        const ext = pathname.slice(extpos + 1);
+        const ua = <string>req.headers['user-agent'];
+        const ie = msieRegex.test(ua) || tridenRegex.test(ua);
+        const accept: string = (<any>req.headers).accept;
+        const acceptWebp =
+            _.isString(accept) && accept.indexOf('image/webp') > -1;
+        const canAccept =
+            valueInArray(ext, <string[]>extensions) && (ie || acceptWebp);
 
         if (!canAccept) {
             next();
+
             return;
         }
 
-        let newPathname = pathname.substr(0, extpos) + (ie ? '.jxr' : '.webp'),
-            filePath = join(dirname, newPathname);
+        const newPathname =
+            pathname.substr(0, extpos) + (ie ? '.jxr' : '.webp');
+        const filePath = join(dirname, newPathname);
 
-        stat(filePath, function(err, stats) {
-            if (!err && stats.isFile()) {
+        stat(filePath, (err, stats) => {
+            if (!_.isNil(err) && stats.isFile()) {
                 req.url = req.url.replace(pathname, newPathname);
                 vary(res, 'Accept');
 
@@ -63,3 +68,5 @@ export default function webp(dirname: string, extensions?: Array<string>) {
         });
     };
 }
+
+export = webp;

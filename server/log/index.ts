@@ -1,53 +1,54 @@
 import { isNumber, isObject, isString } from 'lodash';
 
 const LOG_LEVEL = {
-        FATAL: 6,
-        ERROR: 5,
-        WARN: 4,
-        INFO: 3,
-        DEBUG: 2,
-        TRACE: 1,
-    },
-    LOG_PRINT: Array<string> = [
-        '',
-        'TRACE',
-        'DEBUG',
-        'INFO',
-        'WARN',
-        'ERROR',
-        'FATAL',
-    ];
+    FATAL: 6,
+    ERROR: 5,
+    WARN: 4,
+    INFO: 3,
+    DEBUG: 2,
+    TRACE: 1,
+};
+
+const LOG_PRINT: string[] = [
+    '',
+    'TRACE',
+    'DEBUG',
+    'INFO',
+    'WARN',
+    'ERROR',
+    'FATAL',
+];
 
 class Log {
-    LOG_LEVEL = LOG_LEVEL;
+    public LOG_LEVEL = LOG_LEVEL;
 
     protected logLevel: number = LOG_LEVEL.TRACE;
 
-    fatal(error: any): void {
-        return this.stringifyError(error, LOG_LEVEL.FATAL);
+    public fatal(error: any): void {
+        this.stringifyError(error, LOG_LEVEL.FATAL);
     }
 
-    error(error: any): void {
-        return this.stringifyError(error, LOG_LEVEL.ERROR);
+    public error(error: any): void {
+        this.stringifyError(error, LOG_LEVEL.ERROR);
     }
 
-    warn(message: any): void {
+    public warn(message: any): void {
         this.log(message, LOG_LEVEL.WARN);
     }
 
-    info(message: any): void {
+    public info(message: any): void {
         this.log(message, LOG_LEVEL.INFO);
     }
 
-    debug(message: any): void {
+    public debug(message: any): void {
         this.log(message, LOG_LEVEL.DEBUG);
     }
 
-    trace(message: any): void {
+    public trace(message: any): void {
         this.log(message, LOG_LEVEL.TRACE);
     }
 
-    log(message: any, logLevel: number = LOG_LEVEL.INFO): void {
+    public log(message: any, logLevel: number = LOG_LEVEL.INFO): void {
         if (!this.shouldLog(logLevel)) {
             return;
         }
@@ -59,15 +60,18 @@ class Log {
         console.log(`[${LOG_PRINT[logLevel]}] ${message}`);
     }
 
-    setLogLevel(level: number): void {
+    public setLogLevel(level: number): void {
         if (isNumber((<any>LOG_LEVEL)[level])) {
             this.logLevel = (<any>LOG_LEVEL)[level];
+
             return;
         } else if (level < LOG_LEVEL.TRACE) {
             this.logLevel = LOG_LEVEL.TRACE;
+
             return;
         } else if (level > LOG_LEVEL.ERROR) {
             this.logLevel = LOG_LEVEL.ERROR;
+
             return;
         }
 
@@ -79,11 +83,12 @@ class Log {
             return;
         }
 
-        let message: string = error.message,
-            stack: string = error.stack;
+        const message: string = error.message;
+        const stack: string = error.stack;
 
         if (isString(stack)) {
             this.log(stack, logLevel);
+
             return;
         }
 
@@ -95,8 +100,12 @@ class Log {
     }
 
     protected shouldLog(logLevel: number): boolean {
-        return logLevel >= (this.logLevel || LOG_LEVEL.INFO);
+        if (!isNumber(this.logLevel)) {
+            this.logLevel = LOG_LEVEL.INFO;
+        }
+
+        return logLevel >= this.logLevel;
     }
 }
 
-export default new Log();
+export = new Log();

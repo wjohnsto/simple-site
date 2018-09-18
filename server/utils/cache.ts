@@ -1,8 +1,8 @@
-import cache from 'memory-cache';
 import _ from 'lodash';
+import cache from 'memory-cache';
 
 const put = cache.put.bind(cache);
-let caches: Array<string> = [];
+let caches: string[] = [];
 
 (<any>cache).put = (
     key: any,
@@ -18,11 +18,11 @@ let caches: Array<string> = [];
     return put(key, _.cloneDeep(value), time, timeoutCallback);
 };
 
-export function fetch(id: number, resetTime?: number): any;
-export function fetch(id: string, resetTime?: number): any;
-export function fetch(id: any, resetTime?: number): any {
-    let idIsString = _.isString(id),
-        idIsNumber = isFinite(id) || (idIsString && isFinite(id));
+export function fetch(id: string | number, resetTime?: number): any {
+    const idIsString = _.isString(id);
+    const idIsNumber =
+        (_.isNumber(id) && isFinite(id)) ||
+        (idIsString && isFinite(Number(id)));
 
     if (!(idIsString || idIsNumber)) {
         return;
@@ -30,7 +30,7 @@ export function fetch(id: any, resetTime?: number): any {
         return _.cloneDeep(cache.get(id));
     }
 
-    let cached = cache.get(id);
+    const cached = cache.get(id);
     cache.put(id, cached, resetTime);
 
     return cached;
@@ -41,14 +41,12 @@ export function store(key: string, value: any, time?: number): void {
     caches.push(key);
 }
 
-export function storeById(values: Array<any>, prefix: string): void;
-export function storeById(values: any, prefix: string): void;
-export function storeById(values: any, prefix = ''): void {
+export function storeById(values: any | any[], prefix: string): void {
     if (!_.isArray(values)) {
         values = [values];
     }
 
-    for (let value of values) {
+    for (const value of values) {
         storeItemById(value, prefix);
     }
 }
@@ -58,11 +56,11 @@ export function storeItemById(value: any, prefix = ''): void {
         return;
     }
 
-    cache.put(prefix + value.id, value);
+    cache.put(`${prefix}${value.id}`, value);
 }
 
 export function clearCaches(prefix: string): void {
-    let tempCaches = caches.filter((c) => {
+    const tempCaches = caches.filter((c) => {
         return c.indexOf(prefix) === 0;
     });
 

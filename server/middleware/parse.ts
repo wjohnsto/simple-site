@@ -1,14 +1,14 @@
+import CleanCss from 'clean-css';
 import express from 'express';
+import htmlMinifier from 'html-minifier';
 import htmlParser from 'htmlparser2';
 import _ from 'lodash';
-import request from 'request';
 import path from 'path';
+import request from 'request';
 import uglifyJs from 'uglify-js';
-import htmlMinifier from 'html-minifier';
+import { config } from '../config';
 import * as utils from '../utils';
-import config from '../config';
 import * as cache from '../utils/cache';
-import CleanCss from 'clean-css';
 
 const MINIFY = false;
 const enum TYPE {
@@ -20,7 +20,7 @@ interface ITagInfo {
     value?: string;
 }
 
-async function getTags(tags: Array<ITagInfo>): Promise<Array<string>> {
+async function getTags(tags: ITagInfo[]): Promise<string[]> {
     return utils.mapAsync(tags, async (tag) => {
         if (tag.type === TYPE.TEXT) {
             return <string>tag.value;
@@ -75,40 +75,47 @@ async function getTags(tags: Array<ITagInfo>): Promise<Array<string>> {
 }
 
 function parseHtml(html: string) {
-    let scriptActive = false,
-        scriptTags: Array<ITagInfo> = [],
-        styleActive = false,
-        styleTags: Array<ITagInfo> = [];
+    const scriptTags: ITagInfo[] = [];
+    const styleTags: ITagInfo[] = [];
+    let scriptActive = false;
+    let styleActive = false;
 
     const parser = new htmlParser.Parser(
         {
             onopentag: (name, attribs) => {
                 scriptActive =
                     name === 'script' &&
-                    !attribs.ignore &&
-                    (attribs.type === 'text/javascript' || !!attribs.src);
+                    !_.isString(attribs.ignore) &&
+                    (attribs.type === 'text/javascript' ||
+                        (_.isString(attribs.src) && !_.isEmpty(attribs.src)));
 
                 if (scriptActive) {
                     scriptTags.push({
-                        type: !attribs.src ? TYPE.TEXT : TYPE.FILE,
+                        type:
+                            !_.isString(attribs.src) || _.isEmpty(attribs.src)
+                                ? TYPE.TEXT
+                                : TYPE.FILE,
                     });
 
-                    if (!!attribs.src) {
+                    if (_.isString(attribs.src) && !_.isEmpty(attribs.src)) {
                         scriptTags[scriptTags.length - 1].value = attribs.src;
                     }
                 }
 
                 styleActive =
-                    (!attribs.ignore &&
+                    (!_.isString(attribs.ignore) &&
                         (name === 'style' && attribs.type === 'text/css')) ||
                     (name === 'link' && attribs.rel === 'stylesheet');
 
                 if (styleActive) {
                     styleTags.push({
-                        type: !attribs.href ? TYPE.TEXT : TYPE.FILE,
+                        type:
+                            !_.isString(attribs.href) || _.isEmpty(attribs.href)
+                                ? TYPE.TEXT
+                                : TYPE.FILE,
                     });
 
-                    if (!!attribs.href) {
+                    if (_.isString(attribs.href) && !_.isEmpty(attribs.href)) {
                         styleTags[styleTags.length - 1].value = attribs.href;
                     }
 
@@ -119,7 +126,7 @@ function parseHtml(html: string) {
             },
             ontext: (text) => {
                 if (scriptActive) {
-                    let s = scriptTags[scriptTags.length - 1];
+                    const s = scriptTags[scriptTags.length - 1];
 
                     if (s.type === TYPE.TEXT) {
                         s.value = text.trim();
@@ -127,7 +134,7 @@ function parseHtml(html: string) {
                 }
 
                 if (styleActive) {
-                    let s = styleTags[styleTags.length - 1];
+                    const s = styleTags[styleTags.length - 1];
 
                     if (s.type === TYPE.TEXT) {
                         s.value = text.trim();
@@ -167,7 +174,7 @@ function parseHtml(html: string) {
     return Promise.all([getTags(scriptTags), getTags(styleTags)]);
 }
 
-function minifyScripts(code: Array<string>) {
+function minifyScripts(code: string[]) {
     if (code.length === 0) {
         return '';
     }
@@ -183,7 +190,7 @@ function minifyScripts(code: Array<string>) {
     );
 }
 
-async function minifyStyles(code: Array<string>) {
+async function minifyStyles(code: string[]) {
     if (code.length === 0) {
         return '';
     }
@@ -192,10 +199,10 @@ async function minifyStyles(code: Array<string>) {
         return Promise.resolve(code.join(''));
     }
 
-    const css = await new CleanCss(<any>{
+    const css = await (<Promise<any>>(<any>new CleanCss(<any>{
         level: { 1: { all: true, specialComments: 'none' } },
         returnPromise: true,
-    }).minify(code.join(''));
+    }).minify(code.join(''))));
 
     return css.styles;
 }
@@ -226,13 +233,11 @@ function appendScripts(html: string, scripts: string, styles: string) {
     );
 
     if (scripts.length > 0) {
-        let rest = html.slice(html.lastIndexOf('</body>'));
-        html =
-            html.slice(0, html.lastIndexOf('</body>')) +
-            '    <script type="text/javascript">' +
-            scripts +
-            '</script>\n' +
-            rest;
+        const rest = html.slice(html.lastIndexOf('</body>'));
+        html = `${html.slice(
+            0,
+            html.lastIndexOf('</body>')
+        )}    <script type="text/javascript">${scripts}</script>\n${rest}`;
     }
 
     html = html.replace(
@@ -246,22 +251,18 @@ function appendScripts(html: string, scripts: string, styles: string) {
 
     return html.replace(
         '</head>',
-        '    <style type="text/css">' + styles + '</style>\n</head>'
+        `    <style type="text/css">${styles}</style>\n</head>`
     );
 }
 
-export default function parse(
-    req: express.Request,
-    route: string,
-    html: string = ''
-) {
+function parse(req: express.Request, route: string, html: string = '') {
     html = html.replace(/public\//g, 'static/');
 
     if (route.indexOf('/amp/') > -1) {
         return Promise.resolve(html);
     }
 
-    const cached = cache.fetch('hbs-' + route);
+    const cached = cache.fetch(`hbs-${route}`);
 
     if (!!cached) {
         return Promise.resolve(cached);
@@ -274,20 +275,22 @@ export default function parse(
         .then(([scripts, styles]) => {
             return appendScripts(html, scripts, styles);
         })
-        .then((html) => {
-            return minifyHtml(html);
+        .then((h) => {
+            return minifyHtml(h);
         })
-        .then((html) => {
-            html = html
+        .then((h) => {
+            h = h
                 .replace(/link\signore="true"/g, 'link')
                 .replace(/style\signore="true"/g, 'style')
                 .replace(/script\signore="true"/g, 'script');
 
             // Cache for 1 year
             if (config.ENV.prod) {
-                cache.store('hbs-' + route, html);
+                cache.store(`hbs-${route}`, h);
             }
 
-            return html;
+            return h;
         });
 }
+
+export = parse;
