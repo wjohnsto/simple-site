@@ -1,7 +1,7 @@
-import { resolve, join } from 'path';
+import { join } from 'path';
 import { stat } from 'fs';
 import { Request, Response } from 'express';
-import * as _ from 'lodash';
+import _ from 'lodash';
 
 const vary = require('vary');
 
@@ -21,33 +21,35 @@ export default function webp(dirname: string, extensions?: Array<string>) {
     if (_.isUndefined(extensions)) {
         extensions = ['jpg', 'png', 'jpeg'];
     } else if (!_.isArray(extensions)) {
-        extensions = [<string><any>extensions];
+        extensions = [<string>(<any>extensions)];
     }
 
     return (req: Request, res: Response, next: Function) => {
         let method = req.method.toUpperCase();
 
         if (method !== 'GET' && method !== 'HEAD') {
-            next(); return;
+            next();
+            return;
         }
 
-        let pathname = req.path.replace('/static/', ''),
-            extpos = pathname.lastIndexOf('.'),
-            ext = pathname.slice(extpos + 1),
-            ua = <string>req.headers['user-agent'],
-            ie = msieRegex.test(ua) || tridenRegex.test(ua),
-            accept: string = (<any>req.headers).accept,
-            webp = !!accept && accept.indexOf('image/webp') > -1,
-            canAccept = valueInArray(ext, extensions) && (ie || webp);
+        let pathname = req.path.replace('/static/', '');
+        let extpos = pathname.lastIndexOf('.');
+        let ext = pathname.slice(extpos + 1);
+        let ua = <string>req.headers['user-agent'];
+        let ie = msieRegex.test(ua) || tridenRegex.test(ua);
+        let accept: string = (<any>req.headers).accept;
+        let webp = !!accept && accept.indexOf('image/webp') > -1;
+        let canAccept = valueInArray(ext, <string[]>extensions) && (ie || webp);
 
         if (!canAccept) {
-            next(); return;
+            next();
+            return;
         }
 
         let newPathname = pathname.substr(0, extpos) + (ie ? '.jxr' : '.webp'),
             filePath = join(dirname, newPathname);
 
-        stat(filePath, function (err, stats) {
+        stat(filePath, function(err, stats) {
             if (!err && stats.isFile()) {
                 req.url = req.url.replace(pathname, newPathname);
                 vary(res, 'Accept');

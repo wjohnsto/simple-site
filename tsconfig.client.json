@@ -1,18 +1,18 @@
 {
     "compilerOptions": {
+        "esModuleInterop": true,
+        "lib": ["es2015", "dom"],
         "module": "commonjs",
-        "noImplicitAny": false,
         "removeComments": true,
-        "preserveConstEnums": true,
-        "sourceMap": false,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "strict": true,
+        "strictPropertyInitialization": false,
+        "target": "es5",
+        "noUnusedLocals": true,
         "rootDir": "./ts",
         "outDir": "./public/js"
     },
-    "include": [
-        "ts/**/*",
-        "server/models/models.d.ts"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+    "include": ["ts/**/*", "server/models/models.d.ts"],
+    "exclude": ["node_modules"]
 }

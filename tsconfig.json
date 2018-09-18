@@ -1,15 +1,15 @@
 {
     "compilerOptions": {
+        "esModuleInterop": true,
         "module": "commonjs",
-        "noImplicitAny": false,
         "removeComments": true,
-        "preserveConstEnums": true,
-        "sourceMap": false
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "strict": true,
+        "strictPropertyInitialization": false,
+        "target": "es2017",
+        "noUnusedLocals": true
     },
-    "include": [
-        "server/**/*"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+    "include": ["server/**/*"],
+    "exclude": ["node_modules"]
 }

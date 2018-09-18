@@ -1,65 +1,77 @@
-import * as express from 'express';
-import * as htmlParser from 'htmlparser2';
-import * as _ from 'lodash';
-import * as Promise from 'promise';
-import * as request from 'request';
-import * as path from 'path';
-import * as uglifyJs from 'uglify-js';
-import * as htmlMinifier from 'html-minifier';
+import express from 'express';
+import htmlParser from 'htmlparser2';
+import _ from 'lodash';
+import request from 'request';
+import path from 'path';
+import uglifyJs from 'uglify-js';
+import htmlMinifier from 'html-minifier';
 import * as utils from '../utils';
 import config from '../config';
 import * as cache from '../utils/cache';
-
-const CleanCss = require('clean-css');
+import CleanCss from 'clean-css';
 
 const MINIFY = false;
-const enum TYPE { TEXT, FILE };
-interface ITagInfo { type: TYPE; value?: string; };
+const enum TYPE {
+    TEXT,
+    FILE,
+}
+interface ITagInfo {
+    type: TYPE;
+    value?: string;
+}
 
-function getTags(tags: Array<ITagInfo>): Promise<Array<string>> {
-    return Promise.all(tags.map((tag) => {
+async function getTags(tags: Array<ITagInfo>): Promise<Array<string>> {
+    return utils.mapAsync(tags, async (tag) => {
         if (tag.type === TYPE.TEXT) {
-            return tag.value;
+            return <string>tag.value;
         }
 
-        if (tag.value.indexOf('/static/') === 0) {
-            tag.value = path.resolve(config.root, 'public', tag.value.slice(8));
+        if ((<string>tag.value).indexOf('/static/') === 0) {
+            tag.value = path.resolve(
+                config.root,
+                'public',
+                (<string>tag.value).slice(8)
+            );
 
-            return utils.readFile(tag.value).then((result) => {
-                if (result === 'undefined') {
-                    result = '';
-                }
+            let result = await utils.readFile(<string>tag.value);
 
-                return result;
-            });
-        } else if (tag.value.indexOf('static/') === 0) {
-            tag.value = path.resolve(config.root, 'public', tag.value.slice(7));
+            if (result === 'undefined') {
+                result = '';
+            }
 
-            return utils.readFile(tag.value).then((result) => {
-                if (result === 'undefined') {
-                    result = '';
-                }
+            return result;
+        } else if ((<string>tag.value).indexOf('static/') === 0) {
+            tag.value = path.resolve(
+                config.root,
+                'public',
+                (<string>tag.value).slice(7)
+            );
 
-                return result;
-            });
+            let result = await utils.readFile(<string>tag.value);
+            if (result === 'undefined') {
+                result = '';
+            }
+
+            return result;
         }
 
         return new Promise<string>((resolve, reject) => {
-            request
-                .get(tag.value, (err, response, body) => {
-                    if (!!err) {
-                        reject(err);
-                        return;
-                    }
-                    if (!!body || body === 'undefined') {
-                        resolve('');
-                        return;
-                    }
+            request.get(<string>tag.value, (err, response, body) => {
+                if (!!err) {
+                    reject(err);
 
-                    resolve(body);
-                });
+                    return;
+                }
+                if (!!body || body === 'undefined') {
+                    resolve('');
+
+                    return;
+                }
+
+                resolve(<string>body);
+            });
         });
-    }));
+    });
 }
 
 function parseHtml(html: string) {
@@ -68,61 +80,75 @@ function parseHtml(html: string) {
         styleActive = false,
         styleTags: Array<ITagInfo> = [];
 
-    const parser = new htmlParser.Parser({
-        onopentag: (name, attribs) => {
-            scriptActive = name === 'script' && !attribs.ignore && (attribs.type === 'text/javascript' || !!attribs.src);
+    const parser = new htmlParser.Parser(
+        {
+            onopentag: (name, attribs) => {
+                scriptActive =
+                    name === 'script' &&
+                    !attribs.ignore &&
+                    (attribs.type === 'text/javascript' || !!attribs.src);
 
-            if (scriptActive) {
-                scriptTags.push({ type: !attribs.src ? TYPE.TEXT : TYPE.FILE });
+                if (scriptActive) {
+                    scriptTags.push({
+                        type: !attribs.src ? TYPE.TEXT : TYPE.FILE,
+                    });
 
-                if (!!attribs.src) {
-                    scriptTags[scriptTags.length - 1].value = attribs.src;
-                }
-            }
-
-            styleActive = !attribs.ignore && (name === 'style' && attribs.type === 'text/css') || (name === 'link' && attribs.rel === 'stylesheet');
-
-            if (styleActive) {
-                styleTags.push({ type: !attribs.href ? TYPE.TEXT : TYPE.FILE });
-
-                if (!!attribs.href) {
-                    styleTags[styleTags.length - 1].value = attribs.href;
+                    if (!!attribs.src) {
+                        scriptTags[scriptTags.length - 1].value = attribs.src;
+                    }
                 }
 
-                if (name === 'link') {
+                styleActive =
+                    (!attribs.ignore &&
+                        (name === 'style' && attribs.type === 'text/css')) ||
+                    (name === 'link' && attribs.rel === 'stylesheet');
+
+                if (styleActive) {
+                    styleTags.push({
+                        type: !attribs.href ? TYPE.TEXT : TYPE.FILE,
+                    });
+
+                    if (!!attribs.href) {
+                        styleTags[styleTags.length - 1].value = attribs.href;
+                    }
+
+                    if (name === 'link') {
+                        styleActive = false;
+                    }
+                }
+            },
+            ontext: (text) => {
+                if (scriptActive) {
+                    let s = scriptTags[scriptTags.length - 1];
+
+                    if (s.type === TYPE.TEXT) {
+                        s.value = text.trim();
+                    }
+                }
+
+                if (styleActive) {
+                    let s = styleTags[styleTags.length - 1];
+
+                    if (s.type === TYPE.TEXT) {
+                        s.value = text.trim();
+                    }
+                }
+            },
+            onclosetag: (tagName) => {
+                scriptActive = scriptActive && tagName === 'script';
+                if (scriptActive) {
+                    scriptActive = false;
+                }
+
+                styleActive =
+                    styleActive && (tagName === 'style' || tagName === 'link');
+                if (styleActive) {
                     styleActive = false;
                 }
-            }
+            },
         },
-        ontext: (text) => {
-            if (scriptActive) {
-                let s = scriptTags[scriptTags.length - 1];
-
-                if (s.type === TYPE.TEXT) {
-                    s.value = text.trim();
-                }
-            }
-
-            if (styleActive) {
-                let s = styleTags[styleTags.length - 1];
-
-                if (s.type === TYPE.TEXT) {
-                    s.value = text.trim();
-                }
-            }
-        },
-        onclosetag: (tagName) => {
-            scriptActive = scriptActive && tagName === 'script';
-            if (scriptActive) {
-                scriptActive = false;
-            }
-
-            styleActive = styleActive && (tagName === 'style' || tagName === 'link');
-            if (styleActive) {
-                styleActive = false;
-            }
-        }
-    }, { decodeEntities: true });
+        { decodeEntities: true }
+    );
 
     parser.write(html);
 
@@ -138,10 +164,7 @@ function parseHtml(html: string) {
         parser.done();
     }
 
-    return Promise.all([
-        getTags(scriptTags),
-        getTags(styleTags)
-    ]);
+    return Promise.all([getTags(scriptTags), getTags(styleTags)]);
 }
 
 function minifyScripts(code: Array<string>) {
@@ -153,12 +176,14 @@ function minifyScripts(code: Array<string>) {
         return Promise.resolve(code.join(''));
     }
 
-    return Promise.resolve(uglifyJs.minify(code, {
-        warnings: false
-    }).code);
+    return Promise.resolve(
+        uglifyJs.minify(code, {
+            warnings: false,
+        }).code
+    );
 }
 
-function minifyStyles(code: Array<string>) {
+async function minifyStyles(code: Array<string>) {
     if (code.length === 0) {
         return '';
     }
@@ -167,12 +192,12 @@ function minifyStyles(code: Array<string>) {
         return Promise.resolve(code.join(''));
     }
 
-    return new CleanCss({
+    const css = await new CleanCss(<any>{
         level: { 1: { all: true, specialComments: 'none' } },
-        returnPromise: true
-    }).minify(code.join('')).then((css) => {
-        return css.styles;
-    });
+        returnPromise: true,
+    }).minify(code.join(''));
+
+    return css.styles;
 }
 
 function minifyHtml(html: string) {
@@ -195,23 +220,41 @@ function minifyHtml(html: string) {
 }
 
 function appendScripts(html: string, scripts: string, styles: string) {
-    html = html.replace(/<!-- Remove Script -->[\s\S]*?<!-- \/Remove Script -->/g, '');
+    html = html.replace(
+        /<!-- Remove Script -->[\s\S]*?<!-- \/Remove Script -->/g,
+        ''
+    );
 
     if (scripts.length > 0) {
         let rest = html.slice(html.lastIndexOf('</body>'));
-        html = html.slice(0, html.lastIndexOf('</body>')) + '    <script type="text/javascript">' + scripts + '</script>\n' + rest;
+        html =
+            html.slice(0, html.lastIndexOf('</body>')) +
+            '    <script type="text/javascript">' +
+            scripts +
+            '</script>\n' +
+            rest;
     }
 
-    html = html.replace(/<!-- Remove Style -->[\s\S]*?<!-- \/Remove Style -->/g, '');
+    html = html.replace(
+        /<!-- Remove Style -->[\s\S]*?<!-- \/Remove Style -->/g,
+        ''
+    );
 
     if (styles.length === 0) {
         return html;
     }
 
-    return html.replace('</head>', '    <style type="text/css">' + styles + '</style>\n</head>');
+    return html.replace(
+        '</head>',
+        '    <style type="text/css">' + styles + '</style>\n</head>'
+    );
 }
 
-export default function parse(req: express.Request, route: string, html: string = '') {
+export default function parse(
+    req: express.Request,
+    route: string,
+    html: string = ''
+) {
     html = html.replace(/public\//g, 'static/');
 
     if (route.indexOf('/amp/') > -1) {
@@ -224,23 +267,27 @@ export default function parse(req: express.Request, route: string, html: string 
         return Promise.resolve(cached);
     }
 
-    return parseHtml(html).then(([scripts, styles]) => {
-        return Promise.all([
-            minifyScripts(scripts),
-            minifyStyles(styles)
-        ]);
-    }).then(([scripts, styles]) => {
-        return appendScripts(html, scripts, styles);
-    }).then((html) => {
-        return minifyHtml(html);
-    }).then((html) => {
-        html = html.replace(/link\signore="true"/g, 'link').replace(/style\signore="true"/g, 'style').replace(/script\signore="true"/g, 'script');
+    return parseHtml(html)
+        .then(([scripts, styles]) => {
+            return Promise.all([minifyScripts(scripts), minifyStyles(styles)]);
+        })
+        .then(([scripts, styles]) => {
+            return appendScripts(html, scripts, styles);
+        })
+        .then((html) => {
+            return minifyHtml(html);
+        })
+        .then((html) => {
+            html = html
+                .replace(/link\signore="true"/g, 'link')
+                .replace(/style\signore="true"/g, 'style')
+                .replace(/script\signore="true"/g, 'script');
 
-        // Cache for 1 year
-        if (config.ENV.prod) {
-            cache.store('hbs-' + route, html);
-        }
+            // Cache for 1 year
+            if (config.ENV.prod) {
+                cache.store('hbs-' + route, html);
+            }
 
-        return html;
-    });
-};
+            return html;
+        });
+}

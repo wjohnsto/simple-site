@@ -1,5 +1,4 @@
-import * as express from 'express';
-import log from '../log';
+import express from 'express';
 import { HTTP_CODES } from '../config';
 const { HTTP_NOT_FOUND } = HTTP_CODES;
 

@@ -1,13 +1,12 @@
-import * as express from 'express';
-import * as url from 'url';
-import * as _ from 'lodash';
-import * as logger from 'morgan';
-import * as bodyParser from 'body-parser';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as handlebars from 'express-handlebars';
-import * as moment from 'moment-timezone';
-import * as compression from 'compression';
+import express from 'express';
+import url from 'url';
+import _ from 'lodash';
+import logger from 'morgan';
+import bodyParser from 'body-parser';
+import path from 'path';
+import handlebars from 'express-handlebars';
+import moment from 'moment-timezone';
+import compression from 'compression';
 import log from './log';
 import * as cache from './utils/cache';
 
@@ -46,10 +45,13 @@ app.use('/static', express.static(publicPath));
 app.use((req, res, next) => {
     let cacheControl = req.headers['cache-control'];
 
-    if (cacheControl.indexOf('no-') > -1) {
+    if (_.isString(cacheControl) && cacheControl.indexOf('no-') > -1) {
         res.setHeader('Cache-Control', cacheControl);
     } else {
-        res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+        res.setHeader(
+            'Cache-Control',
+            'public, max-age=86400, stale-while-revalidate=604800'
+        );
     }
 
     next();
@@ -58,21 +60,27 @@ app.use((req, res, next) => {
 // Canonical redirect, use after serving static assets
 app.use((req, res, next) => {
     if (req.path.slice(-1) !== '/' && req.path.length > 1) {
-        res.redirect(301, url.format({
-            pathname: req.path + '/',
-            query: req.query
-        }));
+        res.redirect(
+            301,
+            url.format({
+                pathname: req.path + '/',
+                query: req.query,
+            })
+        );
     } else {
         next();
     }
 });
 
 // Setup hbs
-app.engine('.hbs', handlebars({
-    defaultLayout: 'main',
-    extname: '.hbs',
-    helpers
-}));
+app.engine(
+    '.hbs',
+    handlebars({
+        defaultLayout: 'main',
+        extname: '.hbs',
+        helpers,
+    })
+);
 app.set('view engine', '.hbs');
 
 if (config.ENV.prod) {
@@ -95,9 +103,15 @@ app.use(serverError);
 
 app.set('port', config.PORT);
 app.listen(app.get('port'), () => {
-    log.info(`WebService has started on http://${config.IP}:${config.PORT} running in ${config.ENV.value} mode`);
+    log.info(
+        `WebService has started on http://${config.IP}:${
+            config.PORT
+        } running in ${config.ENV.value} mode`
+    );
 
     if (!config.ENV.prod) {
-        log.info('PLEASE NOTE: your webservice is running not in a production mode!');
+        log.info(
+            'PLEASE NOTE: your webservice is running not in a production mode!'
+        );
     }
 });

@@ -1,10 +1,13 @@
-import * as util from 'util';
-import * as express from 'express';
-import * as _ from 'lodash';
-import log from '../log';
+import util from 'util';
+import express from 'express';
+import _ from 'lodash';
 import { redirects } from '../config';
 
-export default (req: express.Request, res: express.Response, next: express.NextFunction) => {
+export default (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+) => {
     let url = req.url;
 
     let queryIndex = url.indexOf('?'),
@@ -15,7 +18,7 @@ export default (req: express.Request, res: express.Response, next: express.NextF
         let regex = new RegExp(pattern);
         let match = url.match(regex);
 
-        if (!_.isObject(match)) {
+        if (_.isNil(match)) {
             return false;
         }
 

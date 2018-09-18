@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 import log from '../log';
 
 const consoleStamp = require('console-stamp');
@@ -14,18 +14,22 @@ let ENV = {
 };
 
 export const HTTP_CODES = {
-  HTTP_SUCCESS: 200,
-  HTTP_PERMANENT_REDIRECT: 301,
-  HTTP_TEMPORARY_REDIRECT: 302,
-  HTTP_CLIENT_ERROR: 400,
-  HTTP_INVALID_TOKEN: 401,
-  HTTP_NOT_AUTHORIZED: 403,
-  HTTP_NOT_FOUND: 404,
-  HTTP_SERVER_ERROR: 500,
+    HTTP_SUCCESS: 200,
+    HTTP_PERMANENT_REDIRECT: 301,
+    HTTP_TEMPORARY_REDIRECT: 302,
+    HTTP_CLIENT_ERROR: 400,
+    HTTP_INVALID_TOKEN: 401,
+    HTTP_NOT_AUTHORIZED: 403,
+    HTTP_NOT_FOUND: 404,
+    HTTP_SERVER_ERROR: 500,
 };
 
 export const redirects = [
-    { pattern: '^/example', to: '/new/example', status: HTTP_CODES.HTTP_PERMANENT_REDIRECT },
+    {
+        pattern: '^/example',
+        to: '/new/example',
+        status: HTTP_CODES.HTTP_PERMANENT_REDIRECT,
+    },
 ];
 
 const configDefaults = {
@@ -38,11 +42,11 @@ const configDefaults = {
     },
     production: {
         ENV,
-        PORT: process.env['PORT'],
+        PORT: <string>process.env['PORT'],
         IP: 'mysite.com',
         logLevel: log.LOG_LEVEL.WARN,
         root: path.resolve(__dirname + '/../..'),
-    }
+    },
 };
 
 let config = configDefaults.development;

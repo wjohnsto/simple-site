@@ -1,13 +1,15 @@
-import * as express from 'express';
+import express from 'express';
 import log from '../log';
 
-export default (err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+export default (
+    err: Error,
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+) => {
     let { method } = req;
 
-    const {
-        url,
-        body
-    } = req;
+    const { url, body } = req;
 
     method = method.toUpperCase();
 

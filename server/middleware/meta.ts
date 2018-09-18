@@ -1,23 +1,31 @@
-import * as url from 'url';
-import * as express from 'express';
-import * as _ from 'lodash';
+import url from 'url';
+import express from 'express';
+import _ from 'lodash';
 import config from '../config';
 
 function normalizeUrl(url: string) {
-    return url + (url.slice(-1) === '/' ? '' : '/')
+    return url + (url.slice(-1) === '/' ? '' : '/');
 }
 
-export default function meta(req: express.Request, res: express.Response, next: express.NextFunction) {
+export default function meta(
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+) {
     _.defaultsDeep(req.context, {
         head: {
-            meta: {}
+            meta: {},
         },
         main: {
-            url: normalizeUrl(req.url)
-        }
+            url: normalizeUrl(req.url),
+        },
     });
 
-    let meta = req.context.head.meta;
+    let meta = req.context.head!.meta;
+
+    if (_.isNil(meta)) {
+        meta = {};
+    }
 
     if (_.isArray(meta.images)) {
         meta.images.push({ url: '/public/img/meta/home.jpg' });
@@ -36,7 +44,7 @@ export default function meta(req: express.Request, res: express.Response, next: 
     let baseUrl = url.format({
         protocol,
         host,
-        pathname: ''
+        pathname: '',
     });
 
     let reqUrl = url.format({
@@ -67,7 +75,7 @@ export default function meta(req: express.Request, res: express.Response, next: 
             return {
                 url,
                 index: index + 1,
-                name
+                name,
             };
         }).slice(0, -1);
     }

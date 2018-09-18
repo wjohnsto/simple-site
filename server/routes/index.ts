@@ -1,6 +1,5 @@
-import * as express from 'express';
+import express from 'express';
 import meta from '../middleware/meta';
-import * as amp from './amp';
 import * as index from './home';
 import * as blogList from './bloglist';
 import * as blog from './blog';

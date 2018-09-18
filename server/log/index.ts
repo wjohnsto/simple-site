@@ -1,14 +1,22 @@
-import {isError, isFunction, isNumber, isObject, isString} from 'lodash';
+import { isNumber, isObject, isString } from 'lodash';
 
 const LOG_LEVEL = {
-    FATAL: 6,
-    ERROR: 5,
-    WARN: 4,
-    INFO: 3,
-    DEBUG: 2,
-    TRACE: 1
-},
-    LOG_PRINT: Array<string> = ['', 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR', 'FATAL'];
+        FATAL: 6,
+        ERROR: 5,
+        WARN: 4,
+        INFO: 3,
+        DEBUG: 2,
+        TRACE: 1,
+    },
+    LOG_PRINT: Array<string> = [
+        '',
+        'TRACE',
+        'DEBUG',
+        'INFO',
+        'WARN',
+        'ERROR',
+        'FATAL',
+    ];
 
 class Log {
     LOG_LEVEL = LOG_LEVEL;
@@ -44,8 +52,6 @@ class Log {
             return;
         }
 
-        let tracked = isError(message) && logLevel >= LOG_LEVEL.WARN;
-
         if (isObject(message)) {
             message = JSON.stringify(message, null, 2);
         }
@@ -54,8 +60,8 @@ class Log {
     }
 
     setLogLevel(level: number): void {
-        if (isNumber(LOG_LEVEL[level])) {
-            this.logLevel = LOG_LEVEL[level];
+        if (isNumber((<any>LOG_LEVEL)[level])) {
+            this.logLevel = (<any>LOG_LEVEL)[level];
             return;
         } else if (level < LOG_LEVEL.TRACE) {
             this.logLevel = LOG_LEVEL.TRACE;

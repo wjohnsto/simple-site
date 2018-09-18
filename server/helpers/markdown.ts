@@ -1,14 +1,16 @@
-import * as fs from 'fs-extra';
-import * as _ from 'lodash';
-import * as hbs from 'handlebars';
-import * as utils from '../utils';
-
-const Remarkable = require('remarkable');
-const fm = require('front-matter');
+import fs from 'fs-extra';
+import _ from 'lodash';
+import hbs from 'handlebars';
+import Remarkable from 'remarkable';
+import fm from 'front-matter';
 
 function prepareSnippet(md: any) {
     _.forEach(md.renderer.rules, (rule: Function, key: string) => {
-        if (key.indexOf('_') > -1 || key.indexOf('br') > -1 || key.indexOf('hr') > -1) {
+        if (
+            key.indexOf('_') > -1 ||
+            key.indexOf('br') > -1 ||
+            key.indexOf('hr') > -1
+        ) {
             md.renderer.rules[key] = () => '';
             return;
         }
@@ -23,9 +25,9 @@ export function render(str: string, options: any) {
     let out = '';
 
     const md = new Remarkable({
-        html: true,               // Enable HTML tags in source
-        breaks: false,            // Convert '\n' in paragraphs into <br>
-        langPrefix: 'language-',  // CSS language prefix for fenced blocks
+        html: true, // Enable HTML tags in source
+        breaks: false, // Convert '\n' in paragraphs into <br>
+        langPrefix: 'language-', // CSS language prefix for fenced blocks
     });
 
     if (!!options.limit) {
@@ -35,7 +37,10 @@ export function render(str: string, options: any) {
     out = md.render(text);
 
     if (!!options.amp) {
-        out = out.replace(/<img([^>]*)>/g, '<amp-img$1 layout="flex-item"></amp-img>');
+        out = out.replace(
+            /<img([^>]*)>/g,
+            '<amp-img$1 layout="flex-item"></amp-img>'
+        );
     }
 
     if (!!options.limit) {
@@ -54,7 +59,7 @@ export function render(str: string, options: any) {
     return out;
 }
 
-export default function (context: any, options: any = { hash: {} }) {
+export default function(context: any, options: any = { hash: {} }) {
     if (context.slice(-3) === '.md') {
         let buffer = fs.readFileSync(context);
 

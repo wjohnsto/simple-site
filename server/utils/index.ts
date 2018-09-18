@@ -1,28 +1,27 @@
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import * as express from 'express';
-import * as moment from 'moment-timezone';
-import * as Promise from 'promise';
-import * as _ from 'lodash';
-import config from '../config';
+import fs from 'fs-extra';
+import moment from 'moment-timezone';
+import _ from 'lodash';
 
 export function readTime(str: string = '') {
     let wordCount = str.trim().split(' ');
     let length = wordCount.length;
     let time = length / 200;
     let minutes = Math.floor(time);
-    let seconds = Math.floor((time % 1) * 60);
 
     return minutes;
 }
 
 export function isEmptyString(value: any) {
-    return _.isNull(value) || _.isUndefined(value) || (_.isString(value) && _.isEmpty(value));
+    return (
+        _.isNull(value) ||
+        _.isUndefined(value) ||
+        (_.isString(value) && _.isEmpty(value))
+    );
 }
 
-export function isExpired(date: string): boolean
-export function isExpired(date: Date): boolean
-export function isExpired(date: moment.Moment): boolean
+export function isExpired(date: string): boolean;
+export function isExpired(date: Date): boolean;
+export function isExpired(date: moment.Moment): boolean;
 export function isExpired(date: any): boolean {
     if (!_.isDate(date) && _.isEmpty(date)) {
         return true;
@@ -39,7 +38,7 @@ export function toString(value: any): string {
     value = value.trim();
 
     if (_.isEmpty(value)) {
-        return;
+        return value;
     }
 
     return value;
@@ -111,6 +110,9 @@ export function wait(ms: number = 0, value?: any): Promise<void> {
     });
 }
 
-export function mapAsync<T, R>(collection: ArrayLike<T>, iterator: (value: T, key: any, obj: any) => Promise<R>): Promise<Array<R>> {
-    return Promise.all<R>(<any>_.map(collection, iterator));
+export function mapAsync<T, TResult>(
+    collection: _.List<T> | null | undefined,
+    iterator: _.ListIterator<T, Promise<TResult>>
+): Promise<Array<TResult>> {
+    return Promise.all<TResult>(<any>_.map(collection, iterator));
 }

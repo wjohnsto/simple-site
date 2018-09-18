@@ -1,11 +1,16 @@
-import * as cache from 'memory-cache';
-import * as _ from 'lodash';
+import cache from 'memory-cache';
+import _ from 'lodash';
 
 const put = cache.put.bind(cache);
 let caches: Array<string> = [];
 
-(<any>cache).put = (key: any, value: any, time?: number, timeoutCallback?: (key: any) => void) => {
-    if (!isFinite(time)) {
+(<any>cache).put = (
+    key: any,
+    value: any,
+    time?: number,
+    timeoutCallback?: (key: any) => void
+) => {
+    if (!(_.isNil(time) || isFinite(time))) {
         // 7 days
         time = 604800000;
     }
@@ -21,7 +26,7 @@ export function fetch(id: any, resetTime?: number): any {
 
     if (!(idIsString || idIsNumber)) {
         return;
-    } else if (!isFinite(resetTime)) {
+    } else if (!(_.isNil(resetTime) || isFinite(resetTime))) {
         return _.cloneDeep(cache.get(id));
     }
 
@@ -57,10 +62,9 @@ export function storeItemById(value: any, prefix = ''): void {
 }
 
 export function clearCaches(prefix: string): void {
-    let cacheId: string,
-        tempCaches = caches.filter((c) => {
-            return c.indexOf(prefix) === 0;
-        });
+    let tempCaches = caches.filter((c) => {
+        return c.indexOf(prefix) === 0;
+    });
 
     caches = caches.filter((c) => {
         return c.indexOf(prefix) === -1;
