@@ -1,4 +1,4 @@
-declare module Express {
+declare namespace Express {
     export interface Request {
         context: {
             [key: string]: any;
@@ -9,18 +9,22 @@ declare module Express {
                     [key: string]: any;
                     description?: string;
                     baseUrl?: string;
-                    breadcrumbs?: Array<{ url: string; index: number; name: string; }>;
+                    breadcrumbs?: Array<{
+                        url: string;
+                        index: number;
+                        name: string;
+                    }>;
                     canonical?: string;
                     images?: Array<models.IMediaType>;
                     videos?: Array<models.IMediaType>;
-                }
-            },
+                };
+            };
             main?: any;
         };
     }
 }
 
-declare module models {
+declare namespace models {
     export interface IMediaType {
         url: string;
         type?: string;
@@ -28,3 +32,5 @@ declare module models {
         height?: number;
     }
 }
+
+declare module 'front-matter';
