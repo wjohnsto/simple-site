@@ -35,33 +35,34 @@ async function findFiles(req: express.Request): Promise<IFileObject[]> {
 
     try {
         const blogFiles = await utils.readDir(blogPath);
-        const newFiles = await utils.mapAsync(blogFiles, async (file) => {
-            if (file.indexOf('.md') === -1) {
-                return;
+        const newFiles = <IFileObject[]>(await utils.mapAsync(
+            blogFiles,
+            async (file) => {
+                if (file.indexOf('.md') === -1) {
+                    return;
+                }
+
+                const filePath = path.resolve(blogPath, file);
+
+                const contents = await utils.readFile(filePath);
+                const frontMatter = fm<any>(contents);
+                const attributes = frontMatter.attributes;
+                const body = frontMatter.body;
+                const slug = file.replace('.md', '');
+
+                attributes.body = body;
+                attributes.url = `${baseUrl}/blog/${slug}/`;
+                attributes.fullImage = `${baseUrl}${attributes.image}`;
+                attributes.slug = slug;
+                attributes.created = new Date(attributes.created);
+                attributes.readTime = utils.readTime(body);
+
+                return <IFileObject>{ file: filePath, attributes };
             }
-
-            const filePath = path.resolve(blogPath, file);
-
-            const contents = await utils.readFile(filePath);
-            const frontMatter = fm<any>(contents);
-            const attributes = frontMatter.attributes;
-            const body = frontMatter.body;
-            const slug = file.replace('.md', '');
-
-            attributes.body = body;
-            attributes.url = `${baseUrl}/blog/${slug}/`;
-            attributes.fullImage = `${baseUrl}${attributes.image}`;
-            attributes.slug = slug;
-            attributes.created = new Date(attributes.created);
-            attributes.readTime = utils.readTime(body);
-
-            return { file: filePath, attributes };
-        });
+        )).filter(_.isObject);
 
         const sortedFiles: IFileObject[] = sort(
-            _(newFiles)
-                .filter(_.isObject)
-                .value(),
+            _(newFiles).value(),
             (a: IFileObject, b: IFileObject) => {
                 return a.attributes.created <= b.attributes.created;
             }
