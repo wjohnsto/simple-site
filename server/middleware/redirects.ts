@@ -24,7 +24,7 @@ function handleRedirect(
 
         match.shift();
 
-        const to = util.format.apply(util, [redirect.to].concat(match));
+        const to = util.format.apply(util, <any>[redirect.to].concat(match));
         res.redirect(redirect.status, `${to}${query}`.trim());
 
         return true;
