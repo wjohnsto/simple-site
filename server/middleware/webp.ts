@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { stat } from 'fs';
+import { lstat } from 'fs';
 import _ from 'lodash';
 import { join } from 'path';
 import vary from 'vary';
@@ -54,8 +54,8 @@ function webp(dirname: string, extensions?: string[]) {
             pathname.substr(0, extpos) + (ie ? '.jxr' : '.webp');
         const filePath = join(dirname, newPathname);
 
-        stat(filePath, (err, stats) => {
-            if (!_.isNil(err) && stats.isFile()) {
+        lstat(filePath, (err, stats) => {
+            if (!_.isNil(err) && !_.isNil(stats) && stats.isFile()) {
                 req.url = req.url.replace(pathname, newPathname);
                 vary(res, 'Accept');
 

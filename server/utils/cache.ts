@@ -52,7 +52,8 @@ export function storeById(values: any | any[], prefix: string): void {
 }
 
 export function storeItemById(value: any, prefix = ''): void {
-    if (!_.isObject(value) || _.isNull(value.id)) {
+    if (!_(value)
+            .has('id')) {
         return;
     }
 

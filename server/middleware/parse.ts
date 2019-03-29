@@ -81,8 +81,8 @@ function parseHtml(html: string) {
     let styleActive = false;
 
     const parser = new htmlParser.Parser(
-        {
-            onopentag: (name, attribs) => {
+        <any>{
+            onopentag: (name: string, attribs: {[s: string]: string}) => {
                 scriptActive =
                     name === 'script' &&
                     !_.isString(attribs.ignore) &&
@@ -124,7 +124,7 @@ function parseHtml(html: string) {
                     }
                 }
             },
-            ontext: (text) => {
+            ontext: (text: string) => {
                 if (scriptActive) {
                     const s = scriptTags[scriptTags.length - 1];
 
@@ -141,7 +141,7 @@ function parseHtml(html: string) {
                     }
                 }
             },
-            onclosetag: (tagName) => {
+            onclosetag: (tagName: string) => {
                 scriptActive = scriptActive && tagName === 'script';
                 if (scriptActive) {
                     scriptActive = false;
