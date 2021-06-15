@@ -59,7 +59,7 @@
         "morgan": "^1.9.1",
         "node-sass": "^4.11.0",
         "popper.js": "^1.14.7",
-        "postcss": "^7.0.14",
+        "postcss": "^7.0.36",
         "promise": "^8.0.3",
         "purify-css": "^1.2.5",
         "remarkable": "^1.7.1",
