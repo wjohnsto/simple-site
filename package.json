@@ -42,7 +42,7 @@
         "console-stamp": "^0.2.7",
         "exit": "^0.1.2",
         "express": "^4.16.4",
-        "express-handlebars": "^3.0.2",
+        "express-handlebars": "^5.3.1",
         "front-matter": "^3.0.1",
         "fs-extra": "^7.0.1",
         "glob": "^7.1.3",
